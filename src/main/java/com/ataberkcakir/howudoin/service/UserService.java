@@ -1,14 +1,13 @@
 package com.ataberkcakir.howudoin.service;
 
+import com.ataberkcakir.howudoin.dto.UserRegistrationDto;
 import com.ataberkcakir.howudoin.model.User;
 import com.ataberkcakir.howudoin.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -21,22 +20,37 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String registerUser(String firstName, String lastName, String email, String password) {
-        Optional<User> existingUser = userRepository.findByEmail(email);
-        if(existingUser.isPresent()) {
+    public boolean emailExists(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    public String registerUser(@Valid UserRegistrationDto userDto) {
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             return "User with this email already exists";
         }
 
-        String encryptedPassword = passwordEncoder.encode(password);
+        String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
 
         User newUser = new User();
-        newUser.setFirstName(firstName);
-        newUser.setLastName(lastName);
-        newUser.setEmail(email);
-        newUser.setPassword(password);
-        newUser.setCreatedAt(LocalDateTime.now().toString());
+        newUser.setFirstName(userDto.getFirstName());
+        newUser.setLastName(userDto.getLastName());
+        newUser.setEmail(userDto.getEmail());
+        newUser.setPasswordHash(encryptedPassword);
 
         userRepository.save(newUser);
         return "User registered successfully";
+    }
+
+    public String loginUser(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+
+        if (passwordEncoder.matches(password, user.getPasswordHash())) {
+            // generate jwt token or handle session management
+            return "Login successful";
+        }
+        else {
+            throw new BadCredentialsException("Invalid email or password");
+        }
     }
 }
