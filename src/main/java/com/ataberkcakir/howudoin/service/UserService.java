@@ -9,6 +9,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Set;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -32,6 +34,8 @@ public class UserService {
         String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
 
         User newUser = new User();
+        // role u ekledim
+        newUser.setRoles(Set.of("ROLE_USER"));
         newUser.setFirstName(userDto.getFirstName());
         newUser.setLastName(userDto.getLastName());
         newUser.setEmail(userDto.getEmail());

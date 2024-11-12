@@ -48,5 +48,10 @@ public class User {
     @CreatedDate
     private Instant createdAt;
 
+    @DBRef
+    @JsonIgnore
+    private Set<Group> groups = new HashSet<>();
+
+    private Set<String> roles;
 
 }
