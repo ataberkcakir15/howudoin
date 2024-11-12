@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthenticationRequest {
-    private String username;
+    private String email;
     private String password;
 
     // Default constructor
@@ -14,8 +14,8 @@ public class AuthenticationRequest {
     }
 
     // Parameterized constructor
-    public AuthenticationRequest(String username, String password) {
-        this.username = username;
+    public AuthenticationRequest(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 }

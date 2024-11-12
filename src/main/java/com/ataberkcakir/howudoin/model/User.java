@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -39,7 +41,9 @@ public class User {
     @JsonIgnore
     private String passwordHash;
 
-    private List<String> friends;
+    @JsonIgnore
+    @DBRef
+    private Set<User> friends = new HashSet<>();
 
     @CreatedDate
     private Instant createdAt;

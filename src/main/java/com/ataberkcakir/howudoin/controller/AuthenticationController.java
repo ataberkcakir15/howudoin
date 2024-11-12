@@ -25,9 +25,9 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public String authenticate(@RequestBody AuthenticationRequest authRequest) throws Exception {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
         return jwtUtil.generateToken(userDetails);
     }
 }
